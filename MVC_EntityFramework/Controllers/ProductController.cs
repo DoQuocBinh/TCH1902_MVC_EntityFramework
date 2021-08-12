@@ -28,6 +28,18 @@ namespace MVC_EntityFramework.Controllers
         }
         public async Task<IActionResult>  DoCreate(IFormFile postedFile, Product product)
         {
+            var invalid = false;
+            if(product.ProductName.Length < 3)
+            {
+                ModelState.AddModelError("ProductName", "Name length must >= 3 characters");
+                invalid = true;
+            }
+            if (invalid)
+            {
+                var categories = db.Categories.ToList();
+                ViewBag.category = categories;
+                return View("Create");
+            }
             using (var dataStream = new MemoryStream())
             {
                 await postedFile.CopyToAsync(dataStream);
